@@ -1,9 +1,8 @@
 const path = require("path");
 const autoprefixer = require("autoprefixer");
-const pxtoviewport = require("postcss-px-to-viewport");
 module.exports = {
   publicPath: "./",
-  outputDir: "dist/vue-project-template",   // 修改成对应的项目名
+  outputDir: "dist/remote-ipad",   // 修改成对应的项目名
   css: {
     loaderOptions: {
       less: {
@@ -19,9 +18,6 @@ module.exports = {
       postcss: {
         plugins: [
           autoprefixer(),
-          pxtoviewport({
-            viewportWidth: 375
-          })
         ]
       }
     }
@@ -29,10 +25,14 @@ module.exports = {
   devServer: {
     open: true,
     proxy: {        // 根据实际项目做接口代理
-      "/volunteers": {
-        target: "http://112.74.114.37:8023/",
+      "/shoudong": {
+        target: "http://192.168.1.248/",
         changeOrigin: true
       },
+      "monitor": {
+        target: "http://58.213.74.150:17280/",
+        changeOrigin: true
+      }
     }
   },
   configureWebpack: {
