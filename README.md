@@ -35,3 +35,20 @@ https://lanhuapp.com/url/WCxks-AVrOBb
 
 ### 博汇集成
 
+https://blog.csdn.net/emqx_broker/article/details/108791119
+
+### webrtc文档
+https://github.com/atticus91/jswebrtc
+
+ipad遥控地址：
+http://58.213.74.150:8081/remote-ipad/#/index
+https://jszhgdxc.baron.com.cn/remote-ipad/
+
+王总ipad遥控项目向你做个汇报：
+1、现在视频流在ipad上能播放
+2、能发红外遥控了
+
+未来还需要完成
+1、如何集成https
+2、如何和云图集成
+

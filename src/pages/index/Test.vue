@@ -1,17 +1,13 @@
 <template>
   <div class="test">
-    <button @click="publish">发布消息</button>
+    <video ref="testVideo" controls autoplay></video>
   </div>
 </template>
 
 <script>
-import mqtt from "mqtt";
-
 export default {
   data() {
-    return {
-      msgID: 100,
-    };
+    return {};
   },
 
   mounted() {
@@ -20,76 +16,96 @@ export default {
 
   methods: {
     ready() {
-      const clientId =
-        "mqttjs_" +
-        Math.random()
-          .toString(16)
-          .substr(2, 8);
-
-      const host = "ws://58.213.74.150:8083/mqtt";
-      // const host = "ws://broker.emqx.io:8083/mqtt";
-
-      const options = {
-        keepalive: 60,
-        clientId: clientId,
-        protocolId: "MQTT",
-        protocolVersion: 4,
-        clean: true,
-        reconnectPeriod: 1000,
-        connectTimeout: 30 * 1000,
-        will: {
-          topic: "WillMsg",
-          payload: "Connection Closed abnormally..!",
-          qos: 0,
-          retain: false,
-        },
+      const self = this;
+      // let ws = new WebSocket("ws://localhost:8888"); // 连接信令服务器。主要用来交换呼叫，应答双方信息
+      let ws = new WebSocket("ws://116.205.128.18:8888/"); // 连接信令服务器。主要用来交换呼叫，应答双方信息
+      ws.onopen = function() {
+        // 这里是为了在建立连接之后告诉服务端我是应答方
+        ws.send(
+          JSON.stringify({
+            userId: "answer",
+          })
+        );
       };
+      // createAnswer();
 
-      // console.log("Connecting mqtt client");
-      const client = mqtt.connect(host, options);
+      function createAnswer() {
+        let remotePeerConnection;
+        let remoteStream;
+        const servers = null;
+        var constraints = { audio: true, video: true };
+        navigator.mediaDevices
+          .getUserMedia(constraints)
+          .then(function(stream) {
+            /* 使用这个stream stream */
+            remoteStream = stream;
+            remotePeerConnection = new RTCPeerConnection(servers);
+            remotePeerConnection.ontrack = function(event) {
+              console.log(event);
+              self.$refs["testVideo"].srcObject = event.streams[0];
+            };
+            // 媒体协商完成后，webrtc需要建立网络连接。建立网络连接的前提是客户端要知道对端的网络地址
+            // 这个获取并交换网络地址的过程我们称为ICE
+            remotePeerConnection.onicecandidate = function(event) {
+              const candidate = event.candidate;
+              // 通过信令 服务器 发送
+              ws.send(JSON.stringify({
+                type: "answer",
+                isCandidate: true,
+                candidate,
+              }));
+            };
+            const videoTracks = remoteStream.getVideoTracks();
+            // 音频轨道
+            const audioTracks = remoteStream.getAudioTracks();
+            // 判断视频轨道是否有值
+            if (videoTracks.length > 0) {
+              console.log(`使用的设备为: ${videoTracks[0].label}.`);
+            }
+            // 判断音频轨道是否有值
+            if (audioTracks.length > 0) {
+              console.log(`使用的设备为: ${audioTracks[0].label}.`);
+            }
+            // 遍历本地流的所有轨道
+            remoteStream.getTracks().forEach((track) => {
+              remotePeerConnection.addTrack(track, remoteStream);
+            });
+            ws.onmessage = (event) => {
+              const offerJson = JSON.parse(event.data);
+              console.log(offerJson);
+              const { type, sdp, isCandidate, candidate } = offerJson;
 
-      client.on("error", (err) => {
-        console.log("Connection error: ", err);
-        client.end();
-      });
+              if (type == "offer") {
+                console.log("接收到offer消息");
+                if (!isCandidate) {
+                  remotePeerConnection.setRemoteDescription(
+                    new RTCSessionDescription({
+                      type,
+                      sdp,
+                    })
+                  );
+                  remotePeerConnection.createAnswer().then((description) => {
+                    console.log(JSON.stringify(description));
+                    remotePeerConnection
+                      .setLocalDescription(description)
+                      .then(() => {
+                        console.log("本地流设置成功");
+                        ws.send(JSON.stringify(description));
+                      });
+                  });
+                } else {
+                  remotePeerConnection.addIceCandidate(candidate);
+                }
+              }
+            };
+          })
+          .catch(function(err) {
+            /* 处理error */
+            console.log(err);
+          });
+      }
 
-      client.on("reconnect", () => {
-        console.log("Reconnecting...");
-      });
-
-      // 连接
-      client.on("connect", () => {
-        console.log("Client connected:" + clientId);
-        // Subscribe 订阅
-        client.subscribe("EPG/control/IP", { qos: 0 });
-      });
-
-      // Received
-      client.on("message", this.receiveMessage);
-      this.client = client;
-    },
-
-    // 接收消息
-    receiveMessage(topic, message) {
-      console.log(topic);
-      console.log("++++");
-      const receiveMsg = JSON.parse(message.toString());
-      console.log(receiveMsg);
-    },
-
-    publish() {
-      // Publish 发布消息
-      this.msgID++;
-      const params = {
-        type: "command",
-        msgID: this.msgID,
-        name: "OK",
-      };
-      // 这里需要转为字符串
-      this.client.publish("EPG/control/IP", JSON.stringify(params), {
-        qos: 0,
-        retain: false,
-      });
+      createAnswer();
     },
   },
 };
@@ -100,5 +116,10 @@ button {
   width: 400px;
   height: 200px;
   font-size: 28px;
+}
+
+video {
+  width: 100%;
+  height: 100%;
 }
 </style>

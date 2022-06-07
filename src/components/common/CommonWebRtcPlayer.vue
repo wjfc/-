@@ -1,5 +1,5 @@
 <template>
-  <video id="webrtc-player" ref="webRtcPlayer" controls></video>
+  <video id="webrtc-player" ref="webRtcPlayer" playsinline controls></video>
 </template>
 
 <script>

@@ -10,10 +10,7 @@
     </div>
     <div class="control-center outer-shadow">
       <div class="remote-icon remote-icon-ok" @click="handleKeyClick('queren')">
-        <img
-          src="@/assets/images/icons/icon-ok.png"
-          alt=""
-        />
+        <img src="@/assets/images/icons/icon-ok.png" alt="" />
       </div>
       <div class="remote-icon-wrapper top" @click="handleKeyClick('up')">
         <div class="remote-icon-arrow remote-icon-top">
@@ -51,13 +48,17 @@
             <img src="@/assets/images/icons/icon-add.png" alt="" />
           </div>
         </div>
-        <div class="remote-icon-wrapper minus" @click="handleKeyClick('yinjian')">
+        <div
+          class="remote-icon-wrapper minus"
+          @click="handleKeyClick('yinjian')"
+        >
           <div class="remote-icon-minus">
             <img src="@/assets/images/icons/icon-minus.png" alt="" />
           </div>
         </div>
       </div>
     </div>
+   
   </div>
 </template>
 
@@ -78,7 +79,7 @@ export default {
       try {
         window.navigator.vibrate(200);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
       if (key === "screen") {
         //  投屏
@@ -86,7 +87,7 @@ export default {
         //  红外按键
         const params = {
           key,
-          str: "me"
+          str: "me",
         };
         postKeyCode(params);
       }
@@ -318,6 +319,21 @@ export default {
         }
       }
     }
+  }
+
+  .control-numbers {
+    display: flex;
+    
+    .remote-icon {
+      width: 59px;
+      height: 59px;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
   }
 }
 </style>

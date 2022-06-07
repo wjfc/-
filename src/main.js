@@ -5,7 +5,7 @@ import '@/assets/less/reset.less';
 
 Vue.config.productionTip = false;
 /* eslint-disable */
-// var vconsole = new VConsole();
+// var vconsole = new window.VConsole();
 
 new Vue({
   router,

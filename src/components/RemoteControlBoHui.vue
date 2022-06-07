@@ -61,12 +61,50 @@
         </div>
       </div>
     </div>
+    <div class="control-numbers">
+      <div class="remote-icon outer-shadow" @click="handleKeyClick('Num-1')">
+        <img src="@/assets/images/icons/1@2x.png" alt="" />
+      </div>
+      <div class="remote-icon outer-shadow" @click="handleKeyClick('Num-2')">
+        <img src="@/assets/images/icons/2@2x.png" alt="" />
+      </div>
+      <div class="remote-icon outer-shadow" @click="handleKeyClick('Num-3')">
+        <img src="@/assets/images/icons/3@2x.png" alt="" />
+      </div>
+      <div class="remote-icon outer-shadow" @click="handleKeyClick('Num-4')">
+        <img src="@/assets/images/icons/4@2x.png" alt="" />
+      </div>
+      <div class="remote-icon outer-shadow" @click="handleKeyClick('Num-5')">
+        <img src="@/assets/images/icons/5@2x.png" alt="" />
+      </div>
+      <div class="remote-icon outer-shadow" @click="handleKeyClick('Num-6')">
+        <img src="@/assets/images/icons/6@2x.png" alt="" />
+      </div>
+      <div class="remote-icon outer-shadow" @click="handleKeyClick('Num-7')">
+        <img src="@/assets/images/icons/7@2x.png" alt="" />
+      </div>
+      <div class="remote-icon outer-shadow" @click="handleKeyClick('Num-8')">
+        <img src="@/assets/images/icons/8@2x.png" alt="" />
+      </div>
+      <div class="remote-icon outer-shadow" @click="handleKeyClick('Num-9')">
+        <img src="@/assets/images/icons/9@2x.png" alt="" />
+      </div>
+      <div class="remote-icon outer-shadow" @click="handleKeyClick('Num-0')">
+        <img src="@/assets/images/icons/0@2x.png" alt="" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import mqtt from "mqtt";
-import { postKeyCodeBohui } from "@/service/apis";
+
+let hostname;
+if (process.env.NODE_ENV == "development") {
+  hostname =  process.env.VUE_APP_SERVENAME;
+} else {
+  hostname = window.location.hostname;
+}
 
 export default {
   data() {
@@ -86,9 +124,6 @@ export default {
   methods: {
     handleKeyClick(key) {
       if (key === "screen") {
-        console.log(this.isRemoting);
-          const flag = false;
-          if (!flag) return;
         if (!this.isRemoting) {
           //  投屏
           this.client.publish("remote/open", "open", {
@@ -99,7 +134,6 @@ export default {
           this.$parent.isRemoting = true;
         } else {
           //  关闭投屏
-        
           this.client.publish("remote/open", "close", {
             qos: 0,
             retain: false,
@@ -114,22 +148,7 @@ export default {
           name: key,
         };
         this.publish(params);
-        // this.sendKey(params);
       }
-    },
-
-    async sendKey(params) {
-      this.msgID++;
-      params.msgID = this.msgID;
-      // protocolData: {"type":"send_key","data":{"key":"Right"}}
-      const sendParams = {
-        type: "send_key",
-          data: {
-            key: params.name,
-          },
-      };
-      const str = "protocolData="+ JSON.stringify(sendParams);
-      postKeyCodeBohui(str);
     },
 
     ready() {
@@ -139,9 +158,9 @@ export default {
           .toString(16)
           .substr(2, 8);
 
-      const host = "ws://58.213.74.150:8083/mqtt";
-      // const host = "ws://broker.emqx.io:8083/mqtt";
-
+      // const host = "ws://58.213.74.150:8083/mqtt";
+        const host = `wss://${hostname}/mqtt`; // 系统工程师做了代理不加 8084 端口号
+      console.log(host)
       const options = {
         keepalive: 60,
         clientId: clientId,
@@ -194,7 +213,7 @@ export default {
         this.isRemoting = false;
         this.$parent.isRemoting = false;
       } else {
-        console.log(message.toString())
+        console.log(message.toString());
       }
     },
 
@@ -433,6 +452,36 @@ export default {
         &.minus {
           bottom: 0px;
         }
+      }
+    }
+  }
+
+  .control-numbers {
+    margin-top: 64px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+
+    .remote-icon {
+      width: 59px;
+      height: 59px;
+      margin-bottom: 38px;
+      margin-right: 38px;
+
+      &:nth-child(3n) {
+        margin-right: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+        margin-right: 0;
+      }
+
+      img {
+        display: block;
+        width: 17px;
+        height: 40px;
       }
     }
   }

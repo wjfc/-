@@ -24,6 +24,7 @@ module.exports = {
   },
   devServer: {
     open: true,
+    // https: true,
     proxy: {        // 根据实际项目做接口代理
       "/shoudong": {
         target: "http://192.168.1.248/",
@@ -32,7 +33,11 @@ module.exports = {
       "monitor": {
         target: "http://58.213.74.150:17280/",
         changeOrigin: true
-      }
+      },
+      "/rtc": {
+        target: "https://jszhgdxc.baron.com.cn/",
+        changeOrigin: true
+      },
     }
   },
   configureWebpack: {

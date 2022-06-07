@@ -37,6 +37,13 @@
 import { Swiper, SwiperSlide, directive } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
 
+let hostname;
+if (process.env.NODE_ENV == "development") {
+  hostname =  process.env.VUE_APP_SERVENAME;
+} else {
+  hostname = window.location.hostname;
+}
+
 export default {
   components: {
     Swiper,
@@ -75,59 +82,61 @@ export default {
             {
               label: "鼓楼",
               live: true,
-              liveUrl: "webrtc://58.213.74.150/live/SN000001",
+              // liveUrl: "webrtc://116.205.128.18/live/wjfc",
+              // liveUrl: "webrtc://58.213.74.150/live/SN000001",
+              liveUrl: `webrtc://${hostname}/live/SN000001`,
               value: "jiangning",
             },
-            // {
-            //   label: "鼓楼",
-            //   live: false,
-            //   liveUrl: "https//",
-            //   value: "gulou",
-            // },
-            // {
-            //   label: "栖霞",
-            //   live: false,
-            //   liveUrl: "https//",
-            //   value: "qixia",
-            // },
-            // {
-            //   label: "玄武",
-            //   live: false,
-            //   liveUrl: "https//",
-            //   value: "xuanwu",
-            // },
-            // {
-            //   label: "浦口",
-            //   live: false,
-            //   liveUrl: "https//",
-            //   value: "pukou",
-            // },
-            // {
-            //   label: "六合",
-            //   live: true,
-            //   liveUrl: "https//",
-            //   value: "liuhe",
-            // },
+            {
+              label: "鼓楼",
+              live: false,
+              liveUrl: "https//",
+              value: "gulou",
+            },
+            {
+              label: "栖霞",
+              live: false,
+              liveUrl: "https//",
+              value: "qixia",
+            },
+            {
+              label: "玄武",
+              live: false,
+              liveUrl: "https//",
+              value: "xuanwu",
+            },
+            {
+              label: "浦口",
+              live: false,
+              liveUrl: "https//",
+              value: "pukou",
+            },
+            {
+              label: "六合",
+              live: false,
+              liveUrl: "https//",
+              value: "liuhe",
+            },
           ],
         },
-        // {
-        //   label: "苏州",
-        //   value: "suzhou",
-        //   children: [
-        //     {
-        //       label: "相成",
-        //       live: true,
-        //       liveUrl: "https//",
-        //       value: "xiangcheng",
-        //     },
-        //     {
-        //       label: "吴江",
-        //       live: false,
-        //       liveUrl: "https//",
-        //       value: "wujiang",
-        //     },
-        //   ],
-        // },
+        {
+          label: "苏州",
+          value: "suzhou",
+          children: [
+            {
+              label: "相成",
+              live: false,
+              liveUrl: "https//",
+              value: "xiangcheng",
+            },
+            {
+              label: "吴江",
+              live: false,
+              liveUrl: "https//",
+              value: "wujiang",
+            },
+          ],
+        },
       ],
     };
   },

@@ -8,7 +8,9 @@
       </div> -->
       <div class="player-container">
         <CommonWebRtcPlayer  v-if="playUrl && !isRemoting" :playUrl="playUrl"></CommonWebRtcPlayer>
-        <div class="remoting" v-if="playUrl && isRemoting">投屏中</div>
+        <div class="remoting" v-if="playUrl && isRemoting">
+          <img src="@/assets/images/remoting.png" alt="">
+        </div>
       </div>
       <div class="remote-control">
         <RemoteControlBoHui></RemoteControlBoHui>
@@ -29,6 +31,13 @@ import Area from "@/components/Area";
 const dayjs = require("dayjs");
 const formate = "YYYY年MM月DD日 HH:mm";
 
+let hostname;
+if (process.env.NODE_ENV == "development") {
+  hostname =  process.env.VUE_APP_SERVENAME;
+} else {
+  hostname = window.location.hostname;
+}
+
 export default {
   components: {
     // CommonEasyPlayer,
@@ -40,7 +49,8 @@ export default {
   data() {
     return {
       nowDate: dayjs().format(formate),
-      playUrl: "",
+      playUrl: `webrtc://${hostname}/live/SN000001`,
+      // playUrl: "webrtc://116.205.128.18/live/wjfc",
       isRemoting: false,
     };
   },
@@ -116,17 +126,26 @@ export default {
         justify-content: center;
         width: 100%;
         height: 100%;
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
       }
     }
 
     .remote-control {
+      position: absolute;
+      right: 72px;
+      top: 243px;
       width: 341px;
-      height: 801px;
+      height: 1215px;
     }
   }
 
   .page-bottom {
-    margin-top: 129px;
+    width: 1648px;
+    margin-top: 189px;
     padding-left: 84px;
   }
 }
