@@ -37,7 +37,7 @@ if (process.env.NODE_ENV == "development") {
 } else {
   hostname = window.location.hostname;
 }
-
+console.log(hostname)
 export default {
   components: {
     // CommonEasyPlayer,
@@ -49,7 +49,8 @@ export default {
   data() {
     return {
       nowDate: dayjs().format(formate),
-      playUrl: `webrtc://${hostname}/live/SN000001`,
+      playUrl: "",
+      // playUrl: `webrtc://${hostname}/live/SN000001`,
       // playUrl: "webrtc://116.205.128.18/live/wjfc",
       isRemoting: false,
     };

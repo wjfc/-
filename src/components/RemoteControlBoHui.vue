@@ -101,7 +101,7 @@ import mqtt from "mqtt";
 
 let hostname;
 if (process.env.NODE_ENV == "development") {
-  hostname =  process.env.VUE_APP_SERVENAME;
+  hostname = process.env.VUE_APP_SERVENAME;
 } else {
   hostname = window.location.hostname;
 }
@@ -159,8 +159,8 @@ export default {
           .substr(2, 8);
 
       // const host = "ws://58.213.74.150:8083/mqtt";
-        const host = `wss://${hostname}/mqtt`; // 系统工程师做了代理不加 8084 端口号
-      console.log(host)
+      const host = `wss://${hostname}/mqtt`; // 系统工程师做了代理不加 8084 端口号
+      console.log(host);
       const options = {
         keepalive: 60,
         clientId: clientId,

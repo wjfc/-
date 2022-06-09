@@ -36,10 +36,11 @@
 <script>
 import { Swiper, SwiperSlide, directive } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
+import area from "@/utils/area.js";
 
 let hostname;
 if (process.env.NODE_ENV == "development") {
-  hostname =  process.env.VUE_APP_SERVENAME;
+  hostname = process.env.VUE_APP_SERVENAME;
 } else {
   hostname = window.location.hostname;
 }
@@ -82,8 +83,6 @@ export default {
             {
               label: "鼓楼",
               live: true,
-              // liveUrl: "webrtc://116.205.128.18/live/wjfc",
-              // liveUrl: "webrtc://58.213.74.150/live/SN000001",
               liveUrl: `webrtc://${hostname}/live/SN000001`,
               value: "jiangning",
             },
@@ -142,10 +141,27 @@ export default {
   },
 
   mounted() {
-    this.handleLiveClick(0, this.areaList[0].children[0])
+    this.getArea();
   },
 
   methods: {
+    getArea() {
+      area.forEach((p) => {
+        p.label = p.name;
+        p.value = p.code;
+        p.children.forEach((child) => {
+          child.label = child.name;
+          child.value = child.code;
+          if (child.SN) {
+            child.liveUrl = `webrtc://${hostname}/live/${child.SN}`;
+            child.live = true;
+          }
+        });
+      });
+      this.areaList = area;
+      this.handleLiveClick(0, this.areaList[0].children[0]);
+    },
+
     handleCityClick(i) {
       this.parentActive = i;
       this.swiper.slideTo(i);
@@ -154,7 +170,7 @@ export default {
 
     handleLiveClick(i, item) {
       this.liveActive = i;
-      this.$emit("handleClick", item.liveUrl)
+      this.$emit("handleClick", item.liveUrl);
     },
   },
 };
@@ -186,6 +202,9 @@ export default {
       font-size: 36px;
       background: url("~@/assets/images/city.png");
       color: rgba(255, 255, 255, 0.5);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
 
       &.live {
       }
@@ -221,6 +240,9 @@ export default {
       width: 221px;
       height: 70px;
       color: rgba(255, 255, 255, 0.5);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
       background: url("~@/assets/images/live-error.png");
 
       &.live {
