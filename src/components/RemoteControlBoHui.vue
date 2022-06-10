@@ -107,6 +107,8 @@ if (process.env.NODE_ENV == "development") {
 }
 
 export default {
+  props: ["sn"],
+
   data() {
     return {
       msgID: 100,
@@ -114,15 +116,25 @@ export default {
     };
   },
 
+  watch: {
+    "sn": {
+      handler: function() {
+        this.ready();
+      },
+      immediate: true
+    }
+  },
+
   mounted() {
     document
       .getElementById("remote-control-container")
       .addEventListener("touchstart", function() {});
-    this.ready();
+    // this.ready();
   },
 
   methods: {
     handleKeyClick(key) {
+      console.log(this.sn)
       if (key === "screen") {
         if (!this.isRemoting) {
           //  投屏
@@ -193,8 +205,7 @@ export default {
       client.on("connect", () => {
         console.log("Client connected:" + clientId);
         // Subscribe 订阅
-        client.subscribe("EPG/control/SN000001", { qos: 0 });
-        // client.subscribe("EPG/report/SN000001", { qos: 0 });
+        client.subscribe(`EPG/control/${this.sn}`, { qos: 0 });
         client.subscribe("remote/close", { qos: 0 });
       });
 
@@ -207,7 +218,7 @@ export default {
     receiveMessage(topic, message) {
       console.log(topic);
       console.log("++++");
-      if (topic == "EPG/control/SN000001") {
+      if (topic == `EPG/control/${this.sn}`) {
         console.log(message.toString());
       } else if (topic == "remote/close") {
         this.isRemoting = false;
@@ -222,7 +233,7 @@ export default {
       this.msgID++;
       params.msgID = String(this.msgID);
       // 这里需要转为字符串
-      this.client.publish("EPG/control/SN000001", JSON.stringify(params), {
+      this.client.publish(`EPG/control/${this.sn}`, JSON.stringify(params), {
         qos: 0,
         retain: false,
       });

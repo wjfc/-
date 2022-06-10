@@ -38,6 +38,10 @@ module.exports = {
         target: "https://jszhgdxc.baron.com.cn/",
         changeOrigin: true
       },
+      "/api": {
+        target: "https://jszhgdxc.baron.com.cn/",
+        changeOrigin: true
+      },
     }
   },
   configureWebpack: {

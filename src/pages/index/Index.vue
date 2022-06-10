@@ -7,13 +7,16 @@
         <CommonEasyPlayer></CommonEasyPlayer>
       </div> -->
       <div class="player-container">
-        <CommonWebRtcPlayer  v-if="playUrl && !isRemoting" :playUrl="playUrl"></CommonWebRtcPlayer>
+        <CommonWebRtcPlayer
+          v-if="playUrl && !isRemoting"
+          :playUrl="playUrl"
+        ></CommonWebRtcPlayer>
         <div class="remoting" v-if="playUrl && isRemoting">
-          <img src="@/assets/images/remoting.png" alt="">
+          <img src="@/assets/images/remoting.png" alt="" />
         </div>
       </div>
       <div class="remote-control">
-        <RemoteControlBoHui></RemoteControlBoHui>
+        <RemoteControlBoHui :sn="SN"></RemoteControlBoHui>
       </div>
     </div>
     <div class="page-bottom">
@@ -33,11 +36,11 @@ const formate = "YYYY年MM月DD日 HH:mm";
 
 let hostname;
 if (process.env.NODE_ENV == "development") {
-  hostname =  process.env.VUE_APP_SERVENAME;
+  hostname = process.env.VUE_APP_SERVENAME;
 } else {
   hostname = window.location.hostname;
 }
-console.log(hostname)
+console.log(hostname);
 export default {
   components: {
     // CommonEasyPlayer,
@@ -50,6 +53,7 @@ export default {
     return {
       nowDate: dayjs().format(formate),
       playUrl: "",
+      SN: "",
       // playUrl: `webrtc://${hostname}/live/SN000001`,
       // playUrl: "webrtc://116.205.128.18/live/wjfc",
       isRemoting: false,
@@ -85,9 +89,13 @@ export default {
       }, 60000);
     },
 
-    handleClick(val) {
-      console.log(val)
-      this.playUrl = val;
+    handleClick(val, SN) {
+      if (val) {
+        this.playUrl = val;
+      }
+      if (SN) {
+        this.SN = SN;
+      }
     },
   },
 };

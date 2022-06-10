@@ -8,3 +8,7 @@ export function postKeyCode(params) {
 export function postKeyCodeBohui(params) {
   return request.get(`/monitor/send?${params}`);
 }
+
+export function getClients() {
+  return request.get("/api/v1/clients/");
+}

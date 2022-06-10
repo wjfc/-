@@ -36,6 +36,7 @@
 <script>
 import { Swiper, SwiperSlide, directive } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
+import { getClients } from "@/service/apis";
 import area from "@/utils/area.js";
 
 let hostname;
@@ -66,7 +67,7 @@ export default {
       parentActive: 0,
       liveActive: 0,
       swiperOptions: {
-        slidesPerView: 6,
+        slidesPerView: 'auto',
         spaceBetween: 48,
         scrollbar: {
           el: ".swiper-scrollbar",
@@ -75,6 +76,7 @@ export default {
           dragSize: 780,
         },
       },
+      liveClients: [],
       areaList: [
         {
           label: "南京",
@@ -141,11 +143,32 @@ export default {
   },
 
   mounted() {
-    this.getArea();
+    this.getClients();
+    // setInterval(() => {
+    //   this.updateClients();
+    // }, 6000 * 300);
   },
 
   methods: {
-    getArea() {
+    async getClients() {
+      const res = await getClients();
+      const {
+        data: { clients },
+      } = res;
+      this.liveClients = clients;
+      this.getArea();
+    },
+
+    async updateClients() {
+      const res = await getClients();
+      const {
+        data: { clients },
+      } = res;
+      this.liveClients = clients;
+      this.updatArea();
+    },
+
+    updatArea() {
       area.forEach((p) => {
         p.label = p.name;
         p.value = p.code;
@@ -154,23 +177,35 @@ export default {
           child.value = child.code;
           if (child.SN) {
             child.liveUrl = `webrtc://${hostname}/live/${child.SN}`;
-            child.live = true;
+            let live =
+              this.liveClients.findIndex((v) => v.url.indexOf(child.SN) > -1) >
+              -1
+                ? true
+                : false;
+            child.live = live;
+          } else {
+            child.liveUrl = "";
+            child.live = false;
           }
         });
       });
       this.areaList = area;
+    },
+
+    getArea() {
+      this.updatArea();
       this.handleLiveClick(0, this.areaList[0].children[0]);
     },
 
     handleCityClick(i) {
       this.parentActive = i;
       this.swiper.slideTo(i);
-      this.liveActive = 0;
+      this.liveActive = -1;
     },
 
     handleLiveClick(i, item) {
       this.liveActive = i;
-      this.$emit("handleClick", item.liveUrl);
+      this.$emit("handleClick", item.liveUrl, item.SN);
     },
   },
 };
