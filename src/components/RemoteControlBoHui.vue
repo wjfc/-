@@ -138,6 +138,7 @@ export default {
       if (key === "screen") {
         if (!this.isRemoting) {
           //  投屏
+          // "{ type: 'open', SN: "SN00001"}"
           this.client.publish("remote/open", "open", {
             qos: 0,
             retain: false,
