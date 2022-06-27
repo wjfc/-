@@ -113,16 +113,18 @@ export default {
     return {
       msgID: 100,
       isRemoting: false,
+      client: undefined,
+      clientId: undefined,
     };
   },
 
   watch: {
-    "sn": {
+    sn: {
       handler: function() {
         this.ready();
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   mounted() {
@@ -134,12 +136,16 @@ export default {
 
   methods: {
     handleKeyClick(key) {
-      console.log(this.sn)
+      console.log(this.sn);
       if (key === "screen") {
         if (!this.isRemoting) {
           //  投屏
           // "{ type: 'open', SN: "SN00001"}"
-          this.client.publish("remote/open", "open", {
+          const msgObj = {
+            type: "open",
+            playUrl: this.$parent.playUrl,
+          };
+          this.client.publish(`remote/${this.sn}`, JSON.stringify(msgObj), {
             qos: 0,
             retain: false,
           });
@@ -147,7 +153,11 @@ export default {
           this.$parent.isRemoting = true;
         } else {
           //  关闭投屏
-          this.client.publish("remote/open", "close", {
+          const msgObj = {
+            type: "close",
+            playUrl: this.$parent.playUrl,
+          };
+          this.client.publish(`remote/${this.sn}`, JSON.stringify(msgObj), {
             qos: 0,
             retain: false,
           });
@@ -165,7 +175,11 @@ export default {
     },
 
     ready() {
-      const clientId =
+      if (this.clientId) {
+        this.addSubscribe();
+        return;
+      }
+      this.clientId =
         "mqttjs_" +
         Math.random()
           .toString(16)
@@ -173,10 +187,9 @@ export default {
 
       // const host = "ws://58.213.74.150:8083/mqtt";
       const host = `wss://${hostname}/mqtt`; // 系统工程师做了代理不加 8084 端口号
-      console.log(host);
       const options = {
         keepalive: 60,
-        clientId: clientId,
+        clientId: this.clientId,
         protocolId: "MQTT",
         protocolVersion: 4,
         clean: true,
@@ -204,10 +217,10 @@ export default {
 
       // 连接
       client.on("connect", () => {
-        console.log("Client connected:" + clientId);
+        console.log("Client connected:" + this.clientId);
         // Subscribe 订阅
         client.subscribe(`EPG/control/${this.sn}`, { qos: 0 });
-        client.subscribe("remote/close", { qos: 0 });
+        client.subscribe(`remote/${this.sn}`, { qos: 0 });
       });
 
       // Received
@@ -215,15 +228,23 @@ export default {
       this.client = client;
     },
 
+    addSubscribe() {
+      this.client.subscribe(`remote/${this.sn}`, { qos: 0 });
+    },
+
     // 接收消息
     receiveMessage(topic, message) {
-      console.log(topic);
+      console.log(topic, message.toString());
       console.log("++++");
       if (topic == `EPG/control/${this.sn}`) {
         console.log(message.toString());
-      } else if (topic == "remote/close") {
-        this.isRemoting = false;
-        this.$parent.isRemoting = false;
+      } else if (topic == `remote/${this.sn}`) {
+        const resMsg = JSON.parse(message.toString());
+        const { type } = resMsg;
+        if (type === "close") {
+          this.isRemoting = false;
+          this.$parent.isRemoting = false;
+        }
       } else {
         console.log(message.toString());
       }

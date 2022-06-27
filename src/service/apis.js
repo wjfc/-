@@ -12,3 +12,7 @@ export function postKeyCodeBohui(params) {
 export function getClients() {
   return request.get("/api/v1/clients/");
 }
+
+export function getAreas() {
+  return request.get("/json/secondaryArea.json");
+}

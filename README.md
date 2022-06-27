@@ -37,12 +37,19 @@ https://lanhuapp.com/url/WCxks-AVrOBb
 
 https://blog.csdn.net/emqx_broker/article/details/108791119
 
+
+
+### 省网云图ui
+https://lanhuapp.com/url/Wq4kE-AZtbaM
+
+
 ### webrtc文档
 https://github.com/atticus91/jswebrtc
 
 ipad遥控地址：
 http://58.213.74.150:8081/remote-ipad/#/index
-https://jszhgdxc.baron.com.cn/remote-ipad/
+https://jszhgdxc.baron.com.cn/remote-ipad/#/index
+https://jszhgdxc.baron.com.cn/remote-touping/#/index
 
 王总ipad遥控项目向你做个汇报：
 1、现在视频流在ipad上能播放

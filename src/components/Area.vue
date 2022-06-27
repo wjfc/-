@@ -15,7 +15,7 @@
       </swiper>
     </div>
 
-    <div class="lives">
+    <div class="lives" v-if="areaList.length > 0">
       <div
         class="live-item"
         v-for="(item2, i) in areaList[parentActive].children"
@@ -36,8 +36,7 @@
 <script>
 import { Swiper, SwiperSlide, directive } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
-import { getClients } from "@/service/apis";
-import area from "@/utils/area.js";
+import { getClients, getAreas } from "@/service/apis";
 
 let hostname;
 if (process.env.NODE_ENV == "development") {
@@ -67,7 +66,7 @@ export default {
       parentActive: 0,
       liveActive: 0,
       swiperOptions: {
-        slidesPerView: 'auto',
+        slidesPerView: "auto",
         spaceBetween: 48,
         scrollbar: {
           el: ".swiper-scrollbar",
@@ -77,76 +76,15 @@ export default {
         },
       },
       liveClients: [],
-      areaList: [
-        {
-          label: "南京",
-          value: "nanjing",
-          children: [
-            {
-              label: "鼓楼",
-              live: true,
-              liveUrl: `webrtc://${hostname}/live/SN000001`,
-              value: "jiangning",
-            },
-            {
-              label: "鼓楼",
-              live: false,
-              liveUrl: "https//",
-              value: "gulou",
-            },
-            {
-              label: "栖霞",
-              live: false,
-              liveUrl: "https//",
-              value: "qixia",
-            },
-            {
-              label: "玄武",
-              live: false,
-              liveUrl: "https//",
-              value: "xuanwu",
-            },
-            {
-              label: "浦口",
-              live: false,
-              liveUrl: "https//",
-              value: "pukou",
-            },
-            {
-              label: "六合",
-              live: false,
-              liveUrl: "https//",
-              value: "liuhe",
-            },
-          ],
-        },
-        {
-          label: "苏州",
-          value: "suzhou",
-          children: [
-            {
-              label: "相成",
-              live: false,
-              liveUrl: "https//",
-              value: "xiangcheng",
-            },
-            {
-              label: "吴江",
-              live: false,
-              liveUrl: "https//",
-              value: "wujiang",
-            },
-          ],
-        },
-      ],
+      areaList: [],
     };
   },
 
   mounted() {
     this.getClients();
-    // setInterval(() => {
-    //   this.updateClients();
-    // }, 6000 * 300);
+    setInterval(() => {
+      this.updateClients();
+    }, 6000 *300);
   },
 
   methods: {
@@ -156,25 +94,19 @@ export default {
         data: { clients },
       } = res;
       this.liveClients = clients;
-      this.getArea();
+      await this.getAreasJson();
     },
 
-    async updateClients() {
-      const res = await getClients();
-      const {
-        data: { clients },
-      } = res;
-      this.liveClients = clients;
-      this.updatArea();
-    },
-
-    updatArea() {
-      area.forEach((p) => {
+    async getAreasJson() {
+      const { data } = await getAreas();
+      let areaJson = data;
+      areaJson.forEach((p) => {
         p.label = p.name;
         p.value = p.code;
         p.children.forEach((child) => {
           child.label = child.name;
           child.value = child.code;
+          child.SN = child.sn || "";
           if (child.SN) {
             child.liveUrl = `webrtc://${hostname}/live/${child.SN}`;
             let live =
@@ -189,12 +121,37 @@ export default {
           }
         });
       });
-      this.areaList = area;
+      this.areaList = areaJson;
+      this.handleLiveClick(0, this.areaList[0].children[0]);
     },
 
-    getArea() {
-      this.updatArea();
-      this.handleLiveClick(0, this.areaList[0].children[0]);
+    updatAreaListLiveStatus() {
+      this.areaList.forEach((p) => {
+        p.children.forEach((child) => {
+          if (child.SN) {
+            child.liveUrl = `webrtc://${hostname}/live/${child.SN}`;
+            let live =
+              this.liveClients.findIndex((v) => v.url.indexOf(child.SN) > -1) >
+              -1
+                ? true
+                : false;
+            child.live = live;
+          } else {
+            child.liveUrl = "";
+            child.live = false;
+          }
+        });
+      });
+      this.$forceUpdate();
+    },
+
+    async updateClients() {
+      const res = await getClients();
+      const {
+        data: { clients },
+      } = res;
+      this.liveClients = clients;
+      this.updatAreaListLiveStatus();
     },
 
     handleCityClick(i) {

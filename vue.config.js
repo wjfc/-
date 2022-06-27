@@ -42,6 +42,10 @@ module.exports = {
         target: "https://jszhgdxc.baron.com.cn/",
         changeOrigin: true
       },
+      "/json": {
+        target: "https://jszhgdxc.baron.com.cn/",
+        changeOrigin: true
+      },
     }
   },
   configureWebpack: {
