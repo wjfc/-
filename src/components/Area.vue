@@ -192,7 +192,8 @@ export default {
       text-align: center;
       line-height: 64px;
       font-size: 36px;
-      background: url("~@/assets/images/city.png");
+      background-image: url("~@/assets/images/city.png");
+      background-size: 100% 100%;
       color: rgba(255, 255, 255, 0.5);
       overflow: hidden;
       white-space: nowrap;
@@ -202,7 +203,7 @@ export default {
       }
 
       &.active {
-        background: url("~@/assets/images/city-focus.png");
+        background-image: url("~@/assets/images/city-focus.png");
         color: rgba(255, 255, 255, 1);
       }
     }
@@ -235,14 +236,15 @@ export default {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      background: url("~@/assets/images/live-error.png");
+      background-image: url("~@/assets/images/live-error.png");
+      background-size: 100% 100%;
 
       &.live {
-        background: url("~@/assets/images/live.png");
+        background-image: url("~@/assets/images/live.png");
       }
 
       &.error {
-        background: url("~@/assets/images/live-error.png");
+        background-image: url("~@/assets/images/live-error.png");
       }
 
       &.active {
@@ -250,11 +252,11 @@ export default {
       }
 
       &.active.live {
-        background: url("~@/assets/images/live-focus.png");
+        background-image: url("~@/assets/images/live-focus.png");
       }
 
       &.active.error {
-        background: url("~@/assets/images/live-error-focus.png");
+        background-image: url("~@/assets/images/live-error-focus.png");
       }
     }
   }
