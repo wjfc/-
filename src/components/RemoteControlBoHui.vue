@@ -274,6 +274,7 @@ export default {
   border-radius: 35px;
   overflow: hidden;
   font-size: 0;
+  transform: scale(1.2);
 
   .outer-shadow {
     &::after {
