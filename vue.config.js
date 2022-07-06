@@ -38,6 +38,10 @@ module.exports = {
         target: "https://jszhgdxc.baron.com.cn/",
         changeOrigin: true
       },
+      "/api/v2": {
+        target: "http://1.116.245.209:8080/",
+        changeOrigin: true
+      },
       "/api": {
         target: "https://jszhgdxc.baron.com.cn/",
         changeOrigin: true

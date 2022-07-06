@@ -81,10 +81,13 @@ export default {
   },
 
   mounted() {
+    const searchParams = new URLSearchParams(window.location.search);
+    let areaCode = searchParams.get("code");
+    this.areaCode = areaCode;
     this.getClients();
     setInterval(() => {
       this.updateClients();
-    }, 6000 *300);
+    }, 6000 * 300);
   },
 
   methods: {
@@ -122,7 +125,21 @@ export default {
         });
       });
       this.areaList = areaJson;
-      this.handleLiveClick(0, this.areaList[0].children[0]);
+      let indexArray = this.findIndex(this.areaList, this.areaCode);
+      this.parentActive = indexArray[0];
+      this.swiper.slideTo(this.parentActive, 1000, false);
+      this.handleLiveClick(indexArray[1], this.areaList[this.parentActive].children[indexArray[1]]);
+    },
+
+    findIndex(areaList, areaCode) {
+      let parentIndex = 0;
+      let index = 0;
+      if (areaCode != null) {
+        let startCode = areaCode.substr(0, 4);
+        parentIndex = areaList.findIndex((v) => v.code.indexOf(startCode) > -1);
+        index = areaList[parentIndex].children.findIndex((v) => v.code === areaCode);
+      }
+      return [parentIndex, index];
     },
 
     updatAreaListLiveStatus() {
@@ -162,7 +179,16 @@ export default {
 
     handleLiveClick(i, item) {
       this.liveActive = i;
-      this.$emit("handleClick", item.liveUrl, item.SN);
+      if (
+        (this.areaCode != null && item.code == this.areaCode) ||
+        this.areaCode == null
+      ) {
+        this.$toast("已切换至" + item.name);
+        this.$emit("handleClick", item.liveUrl, item.SN);
+      } else if (item.code != this.areaCode) {
+        this.$toast("您无遥控" + item.name + "机顶盒的权限，仅可观看");
+        this.$emit("handleClick", item.liveUrl);
+      }
     },
   },
 };

@@ -30,7 +30,8 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
+@import url("@/assets/less/resetVant.less");
 #app {
   width: 100vw;
   height: 100vh;

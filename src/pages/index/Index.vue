@@ -31,6 +31,7 @@ import CommonWebRtcPlayer from "@/components/common/CommonWebRtcPlayer.vue";
 import RemoteControlBoHui from "@/components/RemoteControlBoHui";
 import Area from "@/components/Area";
 
+
 const dayjs = require("dayjs");
 const formate = "YYYY年MM月DD日 HH:mm";
 
@@ -90,12 +91,11 @@ export default {
     },
 
     handleClick(val, SN) {
-      if (val) {
-        this.playUrl = val;
-      }
-      if (SN) {
-        this.SN = SN;
-      }
+      if (!val) {
+       this.$toast("该区域未部署设备！")
+      } 
+      this.playUrl = val;
+      this.SN = SN;
     },
   },
 };

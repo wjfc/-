@@ -98,6 +98,7 @@
 
 <script>
 import mqtt from "mqtt";
+import { checkClientIdStatus } from "@/service/apis";
 
 let hostname;
 if (process.env.NODE_ENV == "development") {
@@ -121,7 +122,14 @@ export default {
   watch: {
     sn: {
       handler: function() {
-        this.ready();
+        if (this.client) {
+          this.client.end(false);
+        }
+        if (this.sn) {
+          this.clientId = null;
+          this.client = null;
+          this.ready();
+        }
       },
       immediate: true,
     },
@@ -131,12 +139,18 @@ export default {
     document
       .getElementById("remote-control-container")
       .addEventListener("touchstart", function() {});
-    // this.ready();
   },
 
   methods: {
     handleKeyClick(key) {
-      console.log(this.sn);
+      if (!this.client) {
+        // 请先连接一个设备
+        this.$toast("您无法遥控该设备！");
+        return;
+      }
+      if (window.navigator.vibrate) {
+        window.navigator.vibrate(300)
+      } 
       if (key === "screen") {
         if (!this.isRemoting) {
           //  投屏
@@ -172,20 +186,25 @@ export default {
         };
         this.publish(params);
       }
+      this.$toast("按键指令已发送!");
     },
 
-    ready() {
-      if (this.clientId) {
-        this.addSubscribe();
+    async ready() {
+      // this.clientId =
+      //   "mqttjs_" +
+      //   Math.random()
+      //     .toString(16)
+      //     .substr(2, 8);
+      this.clientId = "mqttjs_" + this.sn;
+      const { data: clientStatus } = await checkClientIdStatus(this.clientId);
+      const {
+        result: { objects },
+      } = clientStatus;
+      if (objects.length > 0) {
+        // 已经有人在用了，拒绝连接
+        this.$toast("该设备正在使用中，请稍后连接～");
         return;
       }
-      this.clientId =
-        "mqttjs_" +
-        Math.random()
-          .toString(16)
-          .substr(2, 8);
-
-      // const host = "ws://58.213.74.150:8083/mqtt";
       const host = `wss://${hostname}/mqtt`; // 系统工程师做了代理不加 8084 端口号
       const options = {
         keepalive: 60,
@@ -193,7 +212,8 @@ export default {
         protocolId: "MQTT",
         protocolVersion: 4,
         clean: true,
-        reconnectPeriod: 1000,
+        reconnectPeriod: 1000 * 3,
+        // reconnectPeriod: 0,
         connectTimeout: 30 * 1000,
         will: {
           topic: "WillMsg",
@@ -228,10 +248,6 @@ export default {
       this.client = client;
     },
 
-    addSubscribe() {
-      this.client.subscribe(`remote/${this.sn}`, { qos: 0 });
-    },
-
     // 接收消息
     receiveMessage(topic, message) {
       console.log(topic, message.toString());
@@ -260,6 +276,10 @@ export default {
         retain: false,
       });
     },
+  },
+
+  beforeDestroy() {
+    this.client && this.client.end(false);
   },
 };
 </script>

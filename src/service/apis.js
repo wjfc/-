@@ -16,3 +16,13 @@ export function getClients() {
 export function getAreas() {
   return request.get("/json/secondaryArea.json");
 }
+
+// 根据 clientId 获取 客户端在线离线 状态
+export function checkClientIdStatus(clientId) {
+  return request.get(`/api/v2/clients/${clientId}`, {
+    auth: {
+      username: 'admin',
+      password: 'public'
+    }
+  });
+}
