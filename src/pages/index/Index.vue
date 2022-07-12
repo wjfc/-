@@ -30,8 +30,9 @@ import CommonWebRtcPlayer from "@/components/common/CommonWebRtcPlayer.vue";
 // import CommonEasyPlayer from "@/components/common/CommonEasyPlayer.vue";
 import RemoteControlBoHui from "@/components/RemoteControlBoHui";
 import Area from "@/components/Area";
+import { getAllClientsByNodeName } from '@/service/apis'
 
-
+// let nodeName = "emq@127.0.0.1"; // 默认节点
 const dayjs = require("dayjs");
 const formate = "YYYY年MM月DD日 HH:mm";
 
@@ -81,9 +82,16 @@ export default {
     //     console.log("The player is created");
     //   }
     // );
+    this.getAllClientsByNodeName();
   },
 
   methods: {
+    async getAllClientsByNodeName() {
+      let res = await getAllClientsByNodeName();
+
+      console.log(res)
+    },
+
     showDate() {
       setInterval(() => {
         this.nowDate = dayjs().format(formate);

@@ -26,3 +26,23 @@ export function checkClientIdStatus(clientId) {
     }
   });
 }
+
+export function getAllNodes() {
+  return request.get(`/api/v2/management/nodes`, {
+    auth: {
+      username: 'admin',
+      password: 'public'
+    }
+  });
+}
+
+export function getAllClientsByNodeName() {
+  return request.get(`/api/v2/nodes/emq@127.0.0.1/clients`, {
+    auth: {
+      username: 'admin',
+      password: 'public'
+    }
+  });
+}
+
+

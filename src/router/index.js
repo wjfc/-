@@ -15,6 +15,10 @@ const routes = [
   {
     path: "/test",
     component: () => import('@/pages/index/Test.vue'),
+  },
+  {
+    path: "/video",
+    component: () => import('@/pages/index/VideoTest.vue'),
   }
 ];
 

@@ -93,6 +93,12 @@
         <img src="@/assets/images/icons/0@2x.png" alt="" />
       </div>
     </div>
+    <audio
+      src="@/assets/mp3/audio1.mp3"
+      class="key-audio"
+      v-show="false"
+      ref="keyAudio"
+    ></audio>
   </div>
 </template>
 
@@ -148,9 +154,11 @@ export default {
         this.$toast("您无法遥控该设备！");
         return;
       }
-      if (window.navigator.vibrate) {
-        window.navigator.vibrate(300)
-      } 
+      // if (window.navigator.vibrate) {
+      //   window.navigator.vibrate(300)
+      // }
+      this.$refs.keyAudio.load();
+      this.$refs.keyAudio.play();
       if (key === "screen") {
         if (!this.isRemoting) {
           //  投屏
@@ -215,6 +223,7 @@ export default {
         reconnectPeriod: 1000 * 3,
         // reconnectPeriod: 0,
         connectTimeout: 30 * 1000,
+        username: "jww",
         will: {
           topic: "WillMsg",
           payload: "Connection Closed abnormally..!",

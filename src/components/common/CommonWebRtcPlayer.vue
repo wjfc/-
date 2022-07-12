@@ -1,5 +1,5 @@
 <template>
-  <video id="webrtc-player" ref="webRtcPlayer" playsinline controls autoplay></video>
+  <video class="webrtc-player" ref="webRtcPlayer" playsinline controls autoplay></video>
 </template>
 
 <script>
@@ -57,7 +57,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-#webrtc-player {
+.webrtc-player {
   display: block;
   width: 100%;
   height: 100%;
