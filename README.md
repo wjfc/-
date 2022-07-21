@@ -47,8 +47,14 @@ https://lanhuapp.com/url/Wq4kE-AZtbaM
 https://github.com/atticus91/jswebrtc
 
 ipad遥控地址：
-http://58.213.74.150:8081/remote-ipad/#/index
 https://jszhgdxc.baron.com.cn/remote-ipad/#/index
 https://jszhgdxc.baron.com.cn/remote-touping/#/index
+
+### 账号信息
+- 南京市管理员：nj-admin/vision#2020
+- 玄武区管理员：nj-xw/vision#2020
+- 江苏省管理员：jsadmin/vision#2020
+
+
 
 

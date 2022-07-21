@@ -37,6 +37,7 @@
 import { Swiper, SwiperSlide, directive } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
 import { getClients, getAreas } from "@/service/apis";
+import { getLocalStorage } from "@/utils/localStorage";
 
 let hostname;
 if (process.env.NODE_ENV == "development") {
@@ -44,6 +45,8 @@ if (process.env.NODE_ENV == "development") {
 } else {
   hostname = window.location.hostname;
 }
+
+const userInfo = getLocalStorage("userInfo");
 
 export default {
   components: {
@@ -102,7 +105,21 @@ export default {
 
     async getAreasJson() {
       const { data } = await getAreas();
-      let areaJson = data;
+      let { areaCode, level, areaCodeFu } = userInfo;
+      level = Number(level);
+      let areaJson = [];
+      if (level === 1 && areaCode) {
+        areaJson = data.filter((v) => v.code === areaCode);
+      } else if (level == 2 && areaCode && areaCodeFu) {
+        let parentJson = data.filter((v) => v.code === areaCodeFu);
+        let childrenJson = parentJson[0].children.filter(
+          (v) => v.code === areaCode
+        );
+        parentJson[0].children = childrenJson;
+        areaJson = parentJson;
+      } else {
+        areaJson = data;
+      }
       areaJson.forEach((p) => {
         p.label = p.name;
         p.value = p.code;
@@ -128,7 +145,10 @@ export default {
       let indexArray = this.findIndex(this.areaList, this.areaCode);
       this.parentActive = indexArray[0];
       this.swiper.slideTo(this.parentActive, 1000, false);
-      this.handleLiveClick(indexArray[1], this.areaList[this.parentActive].children[indexArray[1]]);
+      this.handleLiveClick(
+        indexArray[1],
+        this.areaList[this.parentActive].children[indexArray[1]]
+      );
     },
 
     findIndex(areaList, areaCode) {
@@ -137,7 +157,9 @@ export default {
       if (areaCode != null) {
         let startCode = areaCode.substr(0, 4);
         parentIndex = areaList.findIndex((v) => v.code.indexOf(startCode) > -1);
-        index = areaList[parentIndex].children.findIndex((v) => v.code === areaCode);
+        index = areaList[parentIndex].children.findIndex(
+          (v) => v.code === areaCode
+        );
       }
       return [parentIndex, index];
     },

@@ -4,6 +4,7 @@ import App from "./App.vue";
 import router from "./router";
 import '@/assets/less/reset.less';
 
+
 Vue.use(Toast);
 Toast.setDefaultOptions(
   {

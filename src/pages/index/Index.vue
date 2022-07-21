@@ -1,7 +1,10 @@
 <template>
   <div class="page">
     <div class="prism-player" id="player-con"></div>
-    <div class="current-date">{{ nowDate }}</div>
+    <div class="current-date">
+      <span>{{ nowDate }}</span>
+      <img src="@/assets/images/login-out.png" alt="" @click="loginOut">
+    </div>
     <div class="page-center">
       <!-- <div class="player-container">
         <CommonEasyPlayer></CommonEasyPlayer>
@@ -16,7 +19,7 @@
         </div>
       </div>
       <div class="remote-control">
-        <RemoteControlBoHui :sn="SN"></RemoteControlBoHui>
+        <RemoteControlBoHui ref="controlBoHui" :sn="SN"></RemoteControlBoHui>
       </div>
     </div>
     <div class="page-bottom">
@@ -31,18 +34,11 @@ import CommonWebRtcPlayer from "@/components/common/CommonWebRtcPlayer.vue";
 import RemoteControlBoHui from "@/components/RemoteControlBoHui";
 import Area from "@/components/Area";
 import { getAllClientsByNodeName } from '@/service/apis'
+import { setLocalStorage } from "@/utils/localStorage";
 
 // let nodeName = "emq@127.0.0.1"; // 默认节点
 const dayjs = require("dayjs");
 const formate = "YYYY年MM月DD日 HH:mm";
-
-let hostname;
-if (process.env.NODE_ENV == "development") {
-  hostname = process.env.VUE_APP_SERVENAME;
-} else {
-  hostname = window.location.hostname;
-}
-console.log(hostname);
 export default {
   components: {
     // CommonEasyPlayer,
@@ -98,6 +94,13 @@ export default {
       }, 60000);
     },
 
+    loginOut() {
+      this.$refs.controlBoHui.disconnect();
+      setLocalStorage("userInfo", "");
+      // this.$router.replace("/login");
+      window.location.reload();
+    },
+
     handleClick(val, SN) {
       if (!val) {
        this.$toast("该区域未部署设备！")
@@ -113,9 +116,12 @@ export default {
 .page {
   position: relative;
   height: 100%;
+  background: url("~@/assets/images/bg.png") no-repeat center center;
   overflow: hidden;
 
   .current-date {
+    display: flex;
+    justify-content:end;
     margin-top: 49px;
     padding-right: 93px;
     height: 42px;
@@ -124,6 +130,13 @@ export default {
     font-size: 30px;
     font-weight: bold;
     color: #ffffff;
+
+    img {
+      margin-left: 22px;
+      margin-top: 0px;
+      width: 161px;
+      height: 62px;
+    }
   }
 
   .page-center {

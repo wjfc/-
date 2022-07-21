@@ -105,6 +105,9 @@
 <script>
 import mqtt from "mqtt";
 import { checkClientIdStatus } from "@/service/apis";
+import { getLocalStorage } from "@/utils/localStorage";
+
+const userName = getLocalStorage("userInfo").name;
 
 let hostname;
 if (process.env.NODE_ENV == "development") {
@@ -210,7 +213,7 @@ export default {
       } = clientStatus;
       if (objects.length > 0) {
         // 已经有人在用了，拒绝连接
-        this.$toast("该设备正在使用中，请稍后连接～");
+        this.$toast(`${objects[0].username}正在使用中，请稍后连接～`);
         return;
       }
       const host = `wss://${hostname}/mqtt`; // 系统工程师做了代理不加 8084 端口号
@@ -223,7 +226,7 @@ export default {
         reconnectPeriod: 1000 * 3,
         // reconnectPeriod: 0,
         connectTimeout: 30 * 1000,
-        username: "jww",
+        username: userName,
         will: {
           topic: "WillMsg",
           payload: "Connection Closed abnormally..!",
@@ -285,6 +288,10 @@ export default {
         retain: false,
       });
     },
+
+    disconnect() {
+      this.client && this.client.end(false);
+    }
   },
 
   beforeDestroy() {

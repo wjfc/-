@@ -9,11 +9,9 @@ const request = axios.create({});
 //       headers,
 //       data = {}
 //     } = response;
-//     const { errorCode, errorMessage } = data;
-//     if (errorCode !== 0) {
-      
-//     }
-//     return data;
+//    console.log(headers)
+//    console.log(data)
+//     return response;
 //   },
 //   error => {
 //     return Promise.reject(error);

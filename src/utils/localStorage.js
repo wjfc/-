@@ -1,7 +1,7 @@
-function getLocalStorage(item) {
+function _getLocalStorage(item) {
   let type = Object.prototype.toString.call(item);
   if (type !="[object String]" || item === "") {
-    console.error("getLocalStorage 你必须传一个非空字符串");
+    console.error("_getLocalStorage 你必须传一个非空字符串");
     return;
   }
   let res = localStorage.getItem(item);
@@ -12,7 +12,7 @@ function getLocalStorage(item) {
   }
 }
 
-function setLocalStorage(item, value) {
+function _setLocalStorage(item, value) {
   if (typeof value == 'object') {
     localStorage.setItem(item, JSON.stringify(value));
   } else {
@@ -22,30 +22,35 @@ function setLocalStorage(item, value) {
 
 // token
 export function setToken(value) {
-  setLocalStorage('x-long-token', value);
+  _setLocalStorage('x-long-token', value);
 }
 
 export function getToken() {
-  return getLocalStorage('x-long-token');
+  return _getLocalStorage('x-long-token');
 }
 
 // 微信用户信息
 export function setWechatInfo(value) {
-  setLocalStorage('wechatInfo', value);
+  _setLocalStorage('wechatInfo', value);
 }
 
 export function getWechatInfo() {
-  return getLocalStorage('wechatInfo');
+  return _getLocalStorage('wechatInfo');
 }
 
 // 位置信息
 export function setLocation(value) {
-  setLocalStorage('location', value);
+  _setLocalStorage('location', value);
 }
 
 export function getLocation() {
-  return getLocalStorage('location');
+  return _getLocalStorage('location');
 }
+
+export const setLocalStorage = _setLocalStorage;
+
+export const getLocalStorage = _getLocalStorage;
+
 
 
 

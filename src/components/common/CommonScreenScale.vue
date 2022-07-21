@@ -71,7 +71,7 @@ export default {
   left: 50%;
   top: 50%;
   transition: 0.3s;
-  background: url("~@/assets/images/bg.png") no-repeat center center;
+  // background: url("~@/assets/images/bg.png") no-repeat center center;
   background-size: 100% 100%;
   color: #fff;
 }
