@@ -121,7 +121,7 @@ export default {
 
   .current-date {
     display: flex;
-    justify-content:end;
+    justify-content: flex-end;
     margin-top: 49px;
     padding-right: 93px;
     height: 42px;

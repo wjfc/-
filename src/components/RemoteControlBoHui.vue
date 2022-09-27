@@ -145,12 +145,17 @@ export default {
   },
 
   mounted() {
-    document
-      .getElementById("remote-control-container")
-      .addEventListener("touchstart", function() {});
+    // document
+    //   .getElementById("remote-control-container")
+    //   .addEventListener("touchstart", function() {});
   },
 
   methods: {
+    audioStop() {
+      this.$refs.keyAudio.currentTime = 0;
+      this.$refs.keyAudio.pause();
+    },
+
     handleKeyClick(key) {
       if (!this.client) {
         // 请先连接一个设备
@@ -160,6 +165,7 @@ export default {
       // if (window.navigator.vibrate) {
       //   window.navigator.vibrate(300)
       // }
+      this.audioStop();
       this.$refs.keyAudio.load();
       this.$refs.keyAudio.play();
       if (key === "screen") {
